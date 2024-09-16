@@ -1,0 +1,48 @@
+clc % limpia pantalla
+clear all %limpia todo
+close all %cierra todo
+warning off all
+
+% clases y medias
+
+c1 = [0 1 0 3; 0 2 3 0];
+c2 = [4 4 4 5; 0 3 2 6];
+c3 = [6 7 7 8; 0 1 3 2];
+
+m1 =[1;1.25];
+m2 =[4.25;2.75];
+m3 =[7;1.5];
+
+vec = [3 ; -4];
+
+% matriz de cov
+
+matriz_cov1 = c1 - m1;
+matriz_cov2 = c2 - m2;
+matriz_cov3 = c3 - m3;
+
+dato1_1 = matriz_cov1';
+dato1_2 = matriz_cov2';
+dato1_3 = matriz_cov3';
+
+
+matriz_cov1_total = 0.33 * matriz_cov1 * dato1_1;
+matriz_cov2_total = 0.33 * matriz_cov2 * dato1_2;
+matriz_cov3_total = 0.33 * matriz_cov3 * dato1_3;
+
+dato2_1 = inv(matriz_cov1_total);
+dato2_2 = inv(matriz_cov2_total);
+dato2_3 = inv(matriz_cov3_total);
+
+rest1 = vec - m1;
+rest2 = vec - m2;
+rest3 = vec - m3;
+
+dato3_1 = sqrt((rest1)' * dato2_1 * (rest1));
+dato3_2 = sqrt((rest2)' * dato2_2 * (rest2));
+dato3_3 = sqrt((rest3)' * dato2_3 * (rest3));
+
+distancia_mahalanobis = [dato3_1 dato3_2 dato3_3];
+disp(distancia_mahalanobis);
+[minimo, clase] = min(distancia_mahalanobis);
+fprintf("\nMahalanobis \nEl vector pertenece a la case [%d] \n",clase);
