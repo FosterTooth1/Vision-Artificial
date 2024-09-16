@@ -4,13 +4,13 @@ close all % cierra todo
 warning off all
 
 % Clases y medias
-c1 = [0 1 0 3; 0 2 3 0];
-c2 = [4 4 4 5; 0 3 2 6];
-c3 = [6 7 7 8; 0 1 3 2];
+c1=[0 1 0 3; 0 2 3 0];
+c2=[2 3 2 3; 6 6 5 5];
+c3=[6 7 7 8; 0 1 3 2];
 
-m1 = [1; 1.25]; % media de la clase 1
-m2 = [4.25; 2.75]; % media de la clase 2
-m3 = [7; 1.5]; % media de la clase 3
+m1 =mean(c1,2);
+m2 =mean(c2,2);
+m3 =mean(c3,2);
 
 % Punto que queremos clasificar
 vec = [3; -4];
