@@ -105,6 +105,9 @@ while resp_vect == 1
         disp('2. Distancia Mahalanobis');
         disp('3. Distancia de Máxima Probabilidad');
         disp('0. Salir');
+        disp('En caso de que la distancia mahalobis supere:')
+        disp(distancia_maxima)
+        disp('El vector no pertenece a ninguna clase')
         opcion = input('Opción: ');
 
         if opcion == 1
@@ -154,21 +157,11 @@ while resp_vect == 1
 
             % Normalización de probabilidades para que sumen 1
             suma_probabilidades = sum(probabilidades);
-            if suma_probabilidades > 0
-                probabilidades_normalizadas = probabilidades / suma_probabilidades;
-            else
-                probabilidades_normalizadas = probabilidades; % Evitar división por 0 si suma_probabilidades es 0
-            end
+            probabilidades_normalizadas = probabilidades / suma_probabilidades;
 
             [max_prob, clase] = max(probabilidades_normalizadas);
-
-            % Condición para verificar si la probabilidad máxima es menor al 50%
-            if max_prob < 0.5
-                disp('El vector desconocido no pertenece a ninguna clase, la probabilidad máxima es menor a 50%.');
-            else
-                fprintf("\nMáxima Probabilidad \nEl vector pertenece a la clase [%d]", clase);
-                fprintf('\nLa máxima probabilidad normalizada es de: %f\n', max_prob(1));
-            end
+            fprintf("\nMáxima Probabilidad \nEl vector pertenece a la clase [%d]", clase);
+            fprintf('\nLa máxima probabilidad normalizada es de: %f\n', max_prob(1));
         elseif opcion == 0
             resp_distancia = 0;
             break;
