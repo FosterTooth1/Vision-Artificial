@@ -5,10 +5,10 @@ warning off;
 
 colors = ['y', 'm', 'c', 'w', 'k'];
 
-msj_no_classes = 'Ingresa el número de clases a utilizar: ';
+msj_no_classes = 'Porfavor, ingrese el numero de clases: ';
 no_classes = input(msj_no_classes);
 
-msj_no_elementos_p_clase = 'Ingresa el número de elementos por clase: ';
+msj_no_elementos_p_clase = 'Porfavor, ingrese el número de elementos por cada clase: ';
 no_elementos = input(msj_no_elementos_p_clase);
 
 % Número total de elementos en el dataset
@@ -31,7 +31,7 @@ dataset_labels = zeros(no_elementos_dataset, 1); %-> Clases
 counter = 1;
 
 while counter <= no_classes
-    fprintf('Selecciona una ventana para la clase %d:\n', counter);
+    fprintf('Seleccione la ventana para la clase %d:\n', counter);
     
     % Seleccionar la ventana usando rbbox
     rect = getrect;
@@ -42,7 +42,7 @@ while counter <= no_classes
     
     % Validar si la selección es válida
     if width <= 0 || height <= 0
-        fprintf('\n\nSelecciona solo ventanas válidas dentro de la imagen\n');
+        fprintf('\n\nPorfavor, solo seleccione ventanas válidas dentro de la imagen\n');
         continue;
     end
     
@@ -69,19 +69,15 @@ while counter <= no_classes
     counter = counter + 1;
 end
 
-% Función para obtener puntos aleatorios dentro de una ventana seleccionada
-function [x_coordinates, y_coordinates] = get_random_points_within_window(x_min, y_min, width, height, elements_p_class)
-    x_coordinates = randi([x_min, x_min + width], 1, elements_p_class);
-    y_coordinates = randi([y_min, y_min + height], 1, elements_p_class);
-end
+
 
 user_input = 'c';
 
 
 %Comenzamos con los criterios yeah
 while strcmp(user_input, 'c')
-    msg_selected_criteria = 'Ingresa el número del criterio para la clasificación: ';
-    fprintf("\n1. Mahalanobis \n2. Distancia Euclidiana \n3. Máxima Probabilidad \n4. Ejecutar todas las métricas\n");
+    msg_selected_criteria = 'Ingresa por que criterio desea utilizar para la clasificación: ';
+    fprintf("\n1. Mahalanobis \n2. Distancia Euclidiana \n3. Máxima Probabilidad \n4. Todas las anteriores\n");
     selected_criteria_idx = input(msg_selected_criteria);
     k_for_knn = -1;
 
@@ -96,7 +92,7 @@ while strcmp(user_input, 'c')
             selected_criteria_function = criteria_functions{i};
             selected_criteria_name = criteria_names(i);
 
-            fprintf("\nUsando %s\n", selected_criteria_name);
+            fprintf("\nUSUANDO: %s\n", selected_criteria_name);
 
             % Resustitución
             disp("RESUSTITUCIÓN (TODOS CONTRA TODOS)")
@@ -116,7 +112,7 @@ while strcmp(user_input, 'c')
             cross_val_accuracy = get_accuracy(cross_val_global_conf_matrix);
 
             % Leave-one-out
-            disp("LEAVE ONE OUT")
+            disp("LEAVE ONE OUT (dejar uno afuera)")
             leave_one_out_conf_matrix = leave_one_out_using_f(selected_criteria_function, no_classes, dataset_rgb, dataset_labels, k_for_knn);
             leave_one_out_accuracy = get_accuracy(leave_one_out_conf_matrix);
 
@@ -129,7 +125,7 @@ while strcmp(user_input, 'c')
         % Graficar comparación de precisión promedio entre criterios
         figure;
         bar(categorical(criteria_names), avg_accuracies, 'cyan');
-        title('Comparación de Precisión Promedio entre Métodos de Clasificación');
+        title('Comparación de Precisión media entre Métodos de Clasificación');
         ylabel('Precisión Promedio');
         xlabel('Método de Clasificación');
      
@@ -167,15 +163,15 @@ while strcmp(user_input, 'c')
         cross_val_accuracy = get_accuracy(cross_val_global_conf_matrix);
 
         %% Leave-One-Out %%
-        disp("LEAVE ONE OUT")
+        disp("LEAVE ONE OUT (dejar uno afuera)")
         leave_one_out_conf_matrix = leave_one_out_using_f(selected_criteria_function, no_classes, dataset_rgb, dataset_labels, k_for_knn);
         leave_one_out_accuracy = get_accuracy(leave_one_out_conf_matrix);
 
         % Mostrar los resultados de precisión
-        fprintf("ACCURACY USANDO %s\n", selected_criteria_name);
+        fprintf("ACCURACY CON: %s\n", selected_criteria_name);
         fprintf("RESUSTITUCIÓN: %f\n", resustitution_accuracy);
         fprintf("CROSS-VALIDATION 50/50 (%d ITERACIONES): %f\n", iterations, cross_val_accuracy);
-        fprintf("LEAVE ONE OUT: %f\n", leave_one_out_accuracy);
+        fprintf("LEAVE ONE OUT (dejar uno afuera): %f\n", leave_one_out_accuracy);
 
         % Graficar precisión de métricas individuales
         x_acc = ["Resustitución", "CrossValidation", "Leave One Out"];
@@ -188,8 +184,14 @@ while strcmp(user_input, 'c')
         xlabel('Métrica de Validación');
     end
 
-    disp('¿Deseas usar otro criterio de clasificación? c: Continuar. Cualquier otra tecla: Salir');
+    disp('¿Desea usar otro criterio? c: Continuar. Cualquier otra tecla para salir: Salir');
     user_input = input('Teclea la opción deseada: ', 's');
+end
+
+% Función para obtener puntos aleatorios dentro de una ventana seleccionada
+function [x_coordinates, y_coordinates] = get_random_points_within_window(x_min, y_min, width, height, elements_p_class)
+    x_coordinates = randi([x_min, x_min + width], 1, elements_p_class);
+    y_coordinates = randi([y_min, y_min + height], 1, elements_p_class);
 end
 
 %esto ps el accuracy 
