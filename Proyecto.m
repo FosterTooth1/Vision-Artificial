@@ -82,7 +82,7 @@ for i = 1:length(imageFiles)
     % Contar el número de objetos
     num_objects = cc.NumObjects;
 
-    fprintf('Número de objetos detectados (≥ %d píxeles): %d\n', MinArea, num_objects);
+    %fprintf('Número de objetos detectados (≥ %d píxeles): %d\n', MinArea, num_objects);
 
     % Si no se detectaron objetos, continuar con la siguiente imagen
     if num_objects == 0
@@ -150,11 +150,11 @@ for i = 1:length(imageFiles)
         disp(['Error al crear la tabla para la imagen ', filename, ': ', ME.message]);
     end
 
-    % Opcional: Guardar la tabla de características como un archivo .csv
+    % Guardar la tabla de características como un archivo .csv
     csvFilename = fullfile(featuresFolder, [filename, '_Caracteristicas.csv']);
     writetable(Caracteristicas_Imagen, csvFilename);
 
-    % Opcional: Guardar la imagen modificada en la carpeta de imágenes modificadas
+    % Guardar la imagen modificada en la carpeta de imágenes modificadas
     modifiedFilename = fullfile(modifiedFolder, ['Modificado_', filename]);
     imwrite(img_modified, modifiedFilename);
 
@@ -191,21 +191,19 @@ close(f_total);
 
 fprintf('Procesamiento completado. Los resultados se han guardado en:\n%s\n', featuresFolder);
 
-%% --- Inicio de la Nueva Funcionalidad: Clasificador k-means ---
+%% --- Clasificador k-means ---
 
 % Paso 1: Preparar los Datos para k-means
 % Seleccionar las características para la clasificación
-% En este ejemplo, usaremos Promedio_R, Promedio_G, Promedio_B y Promedio_RGB
-% Puedes ajustar las características según tus necesidades
 
 features = Resultados_Totales{:, {'Promedio_R', 'Promedio_G', 'Promedio_B', 'Promedio_RGB'}};
 
-% Opcional: Normalizar las características para que todas tengan igual peso
+% Normalizar las características para que todas tengan igual peso
 features_normalized = normalize(features);
 
 % Paso 2: Aplicar k-means para Clasificar los Objetos
 k = 5; % Número de clases
-rng(1); % Para reproducibilidad
+rng(1);
 [idx, C] = kmeans(features_normalized, k, 'Replicates', 5);
 
 % Añadir los índices de cluster a la tabla
@@ -290,7 +288,7 @@ writetable(Resultados_Totales, updatedCSV);
 % Mostrar una confirmación
 disp('Las etiquetas han sido asignadas y la tabla ha sido actualizada.');
 
-% Opcional: Guardar la tabla consolidada visual con etiquetas
+% Guardar la tabla consolidada visual con etiquetas
 f_total_updated = figure('Name', 'Resultados Consolidados con Etiquetas', 'Position', [150 150 1200 800]);
 try
     uitable(f_total_updated, 'Data', table2cell(Resultados_Totales), ... % Convertir a celda para soportar tipos mixtos
@@ -302,9 +300,6 @@ catch ME
     disp(['Error al crear la tabla consolidada con etiquetas: ', ME.message]);
 end
 
-% Guardar la figura como una imagen (PNG)
-figureFile_updated = fullfile(featuresFolder, 'Resultados_Totales_Con_Etiquetas.png');
-saveas(f_total_updated, figureFile_updated);
 
 % Cerrar la figura de resultados totales actualizada después de un breve retraso
 pause(1);
@@ -312,7 +307,7 @@ close(f_total_updated);
 
 fprintf('Proceso de clasificación y etiquetado completado. Los resultados actualizados se han guardado en:\n%s\n', featuresFolder);
 
-%% --- Inicio de la Nueva Funcionalidad: Memorama ---
+%% Memorama ---
 
 % Preparar los datos necesarios para el memorama
 % Seleccionar las 25 imágenes aleatorias y crear el arreglo de 50 elementos
@@ -326,7 +321,7 @@ if length(uniqueImages) < 25
 end
 
 % Seleccionar 25 imágenes al azar
-selectedImages = uniqueImages(randperm(length(uniqueImages), 25));
+selectedImages = uniqueImages(randperm(length(uniqueImages), 3));
 
 % Crear el arreglo de 50 elementos con pares
 memoramaArray = [selectedImages; selectedImages];
@@ -336,7 +331,7 @@ memoramaArray = memoramaArray(:)'; % Convertir a un vector fila de 1x50
 memoramaArray = memoramaArray(randperm(length(memoramaArray)));
 
 % Inicializar variables para el juego
-matchedIndices = false(1,50); % Indicadores de pares encontrados
+matchedIndices = false(1,6); % Indicadores de pares encontrados
 playerScores = [0, 0]; % [Jugador1, Jugador2]
 currentPlayer = 1; % 1 para Jugador 1, 2 para Jugador 2
 
@@ -405,7 +400,7 @@ end
 function displayGrid(memoramaArray, matchedIndices)
     % Función para mostrar el tablero del memorama en la terminal
     fprintf('\nTablero Actual:\n');
-    for i = 1:50
+    for i = 1:6
         if matchedIndices(i)
             fprintf('[X] ');
         else
